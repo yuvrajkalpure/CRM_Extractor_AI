@@ -6,7 +6,7 @@ async function main() {
         `https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GEMINI_API_KEY}`
     );
 
-    const data = await res.json();
+    const data: any = await res.json();
 
     for (const model of data.models) {
         if (model.supportedGenerationMethods?.includes("generateContent")) {
