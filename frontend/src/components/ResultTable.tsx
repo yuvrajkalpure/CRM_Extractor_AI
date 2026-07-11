@@ -312,7 +312,7 @@ export default function ResultTable({ result }: ResultTableProps) {
                   padding: "3px 10px",
                 }}
               >
-                Unclassified: <strong>{count}</strong>
+                Status not inferred: <strong>{count}</strong>
               </span>
             );
           })}
