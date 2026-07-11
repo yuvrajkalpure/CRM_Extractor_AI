@@ -97,8 +97,10 @@ npm run dev
 
 The frontend runs on **http://localhost:3000** (or port 3002 if 3000 is occupied).
 
-### 3. Backend Environment Variables (`backend/.env`)
+### 3. Environment Variables
 
+**Backend (`backend/.env`)**
+Create `backend/.env` (using `backend/.env.example` as a template):
 ```env
 # "gemini" or "ollama"
 AI_PROVIDER=ollama
@@ -113,6 +115,13 @@ OLLAMA_MODEL=qwen2.5:3b
 
 PORT=3001
 NODE_ENV=development
+```
+
+**Frontend (`frontend/.env.local`)**
+Create `frontend/.env.local` (using `frontend/.env.local.example` as a template):
+```env
+# URL of the backend server API
+NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
 
 ## How the Hybrid Processing Pipeline Works
