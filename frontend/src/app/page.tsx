@@ -64,24 +64,57 @@ export default function Home() {
     setError("");
     setProcessing({ uploadProgress: 0, message: "Uploading CSV to server..." });
 
+    let tickInterval: NodeJS.Timeout | null = null;
+
     try {
       const importResult = await importCsv(csvFile, (pct) => {
         if (pct < 100) {
+          const scaled = Math.round(pct * 0.85); // 0-85% for upload
           setProcessing({
-            uploadProgress: pct,
-            message: `Uploading... ${pct}%`,
+            uploadProgress: scaled,
+            message: `Uploading... ${scaled}%`,
           });
         } else {
-          setProcessing({
-            uploadProgress: 100,
-            message: "AI is extracting CRM fields...",
+          setProcessing((prev) => {
+            // Avoid overwriting if ticker already running or finished
+            if (prev.uploadProgress >= 90) return prev;
+            return {
+              uploadProgress: 90,
+              message: "AI is extracting CRM fields...",
+            };
           });
+
+          if (!tickInterval) {
+            let currentPct = 90;
+            tickInterval = setInterval(() => {
+              setProcessing((prev) => {
+                if (prev.uploadProgress < 99) {
+                  return {
+                    uploadProgress: prev.uploadProgress + 1,
+                    message: "AI is extracting CRM fields...",
+                  };
+                }
+                return prev;
+              });
+            }, 750); // Tick every 750ms
+          }
         }
       });
 
+      if (tickInterval) {
+        clearInterval(tickInterval);
+      }
+
+      setProcessing({
+        uploadProgress: 100,
+        message: "Results ready!",
+      });
       setResult(importResult);
       setStep(4);
     } catch (err: unknown) {
+      if (tickInterval) {
+        clearInterval(tickInterval);
+      }
       const message =
         (err as { response?: { data?: { error?: string } }; message?: string })
           ?.response?.data?.error ||
